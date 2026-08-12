@@ -35,10 +35,20 @@ public class StatsServiceImpl implements StatsService {
             throw new IllegalArgumentException("Дата начала периода не может быть позже даты окончания");
         }
 
+        boolean urisIsEmpty = (uris == null || uris.isEmpty());
+
         if (unique) {
-            return statsRepository.getStatsUnique(start, end, uris);
+            if (urisIsEmpty) {
+                return statsRepository.getStatsUniqueWithoutUris(start, end);
+            } else {
+                return statsRepository.getStatsUnique(start, end, uris);
+            }
         } else {
-            return statsRepository.getStats(start, end, uris);
+            if (urisIsEmpty) {
+                return statsRepository.getStatsWithoutUris(start, end);
+            } else {
+                return statsRepository.getStats(start, end, uris);
+            }
         }
     }
 }
