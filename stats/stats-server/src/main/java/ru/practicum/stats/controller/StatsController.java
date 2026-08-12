@@ -16,6 +16,7 @@ import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.stats.service.StatsService;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -24,6 +25,7 @@ import java.util.List;
 public class StatsController {
 
     private final StatsService statsService;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // Сохранение информации о том, что к эндпоинту был запрос
     @PostMapping("/hit")
@@ -37,13 +39,16 @@ public class StatsController {
     // Получение статистики по посещениям
     @GetMapping("/stats")
     public List<ViewStatsDto> getStats(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+            @RequestParam String start,
+            @RequestParam String end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
         log.info("Получен запрос на получение статистики: start={}, end={}, uris={}, unique={}",
                 start, end, uris, unique);
-        List<ViewStatsDto> viewStats = statsService.getStats(start, end, uris, unique);
+        LocalDateTime startTime = LocalDateTime.parse(start, DATE_TIME_FORMATTER);
+        LocalDateTime endTime = LocalDateTime.parse(end, DATE_TIME_FORMATTER);
+
+        List<ViewStatsDto> viewStats = statsService.getStats(startTime, endTime, uris, unique);
         log.info("Отправка ответа клиенту, найдено записей: {}", viewStats.size());
         return viewStats;
     }

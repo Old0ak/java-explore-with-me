@@ -4,15 +4,20 @@ import org.springframework.stereotype.Component;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.stats.model.EndpointHit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class StatsMapper {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public EndpointHit toEndpointHit(EndpointHitDto dto) {
         return EndpointHit.builder()
                 .app(dto.getApp())
                 .uri(dto.getUri())
                 .ip(dto.getIp())
-                .timestamp(dto.getTimestamp())
+                .timestamp(LocalDateTime.parse(dto.getTimestamp(), formatter))
                 .build();
     }
 }
