@@ -9,8 +9,6 @@ import org.springframework.web.client.RestClient;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -48,22 +46,20 @@ public class StatsClient {
         String startStr = start.format(formatter);
         String endStr = end.format(formatter);
 
-        String encodedStart = URLEncoder.encode(startStr, StandardCharsets.UTF_8);
-        String encodedEnd = URLEncoder.encode(endStr, StandardCharsets.UTF_8);
-
-        StringBuilder uriBuilder = new StringBuilder("/stats")
-                .append("?start=").append(encodedStart)
-                .append("&end=").append(encodedEnd)
-                .append("&unique=").append(unique);
-
-        if (uris != null && !uris.isEmpty()) {
-            for (String uri : uris) {
-                uriBuilder.append("&uris=").append(uri);
-            }
-        }
-
         return restClient.get()
-                .uri(uriBuilder.toString())
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path("/stats")
+                            .queryParam("start", startStr)
+                            .queryParam("end", endStr)
+                            .queryParam("unique", unique);
+
+                    if (uris != null && !uris.isEmpty()) {
+                        builder.queryParam("uris", uris);
+                    }
+
+                    return builder.build();
+                })
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ViewStatsDto>>() {});
