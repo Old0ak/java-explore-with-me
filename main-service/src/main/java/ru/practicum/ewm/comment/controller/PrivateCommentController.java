@@ -10,6 +10,8 @@ import ru.practicum.ewm.comment.dto.CommentResponseDto;
 import ru.practicum.ewm.comment.dto.NewCommentDto;
 import ru.practicum.ewm.comment.service.CommentService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users/{userId}/comments")
 @RequiredArgsConstructor
@@ -23,10 +25,10 @@ public class PrivateCommentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentResponseDto createComment(@PathVariable Long userId,
-                                            @RequestParam Long eventId,
                                             @Valid @RequestBody NewCommentDto dto) {
-        log.info("Приватный API: запрос на создание комментария от пользователя id={}, eventId={}", userId, eventId);
-        CommentResponseDto created = commentService.createComment(userId, eventId, dto);
+        log.info("Приватный API: запрос на создание комментария от пользователя id={}, eventId={}",
+                userId, dto.getEventId());
+        CommentResponseDto created = commentService.createComment(userId, dto);
         log.info("Приватный API: пользователю id={} успешно создан комментарий с id={}", userId, created.getId());
         return created;
     }
@@ -40,6 +42,28 @@ public class PrivateCommentController {
         CommentResponseDto updated = commentService.updateComment(userId, commentId, dto);
         log.info("Приватный API: пользователь id={} успешно обновил комментарий id={}", userId, commentId);
         return updated;
+    }
+
+    // Получение комментариев конкретного пользователя к конкретному событию
+    @GetMapping
+    public List<CommentResponseDto> getCommentsByUserAndEvent(@PathVariable Long userId,
+                                                              @RequestParam Long eventId) {
+        log.info("Приватный API: запрос списка комментариев от пользователя id={} к событию eventId={}",
+                userId, eventId);
+        List<CommentResponseDto> comments = commentService.getCommentsByUserIdAndEventId(userId, eventId);
+        log.info("Приватный API: найдено {} комментариев пользователя id={} к событию eventId={}",
+                comments.size(), userId, eventId);
+        return comments;
+    }
+
+    // Получение одиночного комментария пользователя по ID
+    @GetMapping("/{commentId}")
+    public CommentResponseDto getCommentByIdAndUser(@PathVariable Long userId,
+                                                    @PathVariable Long commentId) {
+        log.info("Приватный API: запрос комментария id={} от пользователя id={}", commentId, userId);
+        CommentResponseDto comment = commentService.getCommentByUserIdAndCommentId(userId, commentId);
+        log.info("Приватный API: успешно получен комментарий id={} для пользователя id={}", commentId, userId);
+        return comment;
     }
 
     // Удаление собственного комментария автором

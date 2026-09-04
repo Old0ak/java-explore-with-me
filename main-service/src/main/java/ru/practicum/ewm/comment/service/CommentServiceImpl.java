@@ -35,13 +35,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentResponseDto createComment(Long userId, Long eventId, NewCommentDto dto) {
+    public CommentResponseDto createComment(Long userId, NewCommentDto dto) {
         User author = getUserOrThrow(userId);
-        Event event = getEventOrThrow(eventId);
+        Event event = getEventOrThrow(dto.getEventId());
         checkEventIsPublished(event);
 
         Comment comment = commentMapper.toComment(dto, event, author);
-        comment.setCreatedOn(LocalDateTime.now());
 
         Comment savedComment = commentRepository.save(comment);
         return commentMapper.toCommentResponseDto(savedComment);
@@ -72,6 +71,23 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<CommentResponseDto> getCommentsByUserIdAndEventId(Long userId, Long eventId) {
+        validateUserId(userId);
+        validateEventId(eventId);
+        return commentRepository.findAllByAuthorIdAndEventId(userId, eventId).stream()
+                .map(commentMapper::toCommentResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentResponseDto getCommentByUserIdAndCommentId(Long userId, Long commentId) {
+        validateUserId(userId);
+
+        Comment comment = getCommentByAuthorOrThrow(commentId, userId);
+        return commentMapper.toCommentResponseDto(comment);
+    }
+
+    @Override
     public List<CommentResponseDto> getCommentsByEvent(Long eventId, int from, int size) {
         validateEventId(eventId);
 
@@ -80,6 +96,12 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findAllByEventId(eventId, pageable).stream()
                 .map(commentMapper::toCommentResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentResponseDto getCommentByIdPublic(Long commentId) {
+        Comment comment = getCommentOrThrow(commentId);
+        return commentMapper.toCommentResponseDto(comment);
     }
 
     @Override
@@ -147,5 +169,11 @@ public class CommentServiceImpl implements CommentService {
         if (event.getState() != EventState.PUBLISHED) {
             throw new ConflictException("Нельзя оставить комментарий к неопубликованному событию.");
         }
+    }
+
+    private Comment getCommentByAuthorOrThrow(Long commentId, Long userId) {
+        return commentRepository.findByIdAndAuthorId(commentId, userId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Комментарий с id=" + commentId + " от пользователя id=" + userId + " не найден"));
     }
 }

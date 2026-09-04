@@ -176,7 +176,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{ \"text\": \"Классное мероприятие, обязательно приду!\" }",
+          "raw": "{ \r\n  \"text\": \"Классное мероприятие, обязательно приду!\",\r\n  \"eventId\": 1 \r\n}\r\n",
           "options": {
             "raw": {
               "language": "json"
@@ -184,7 +184,7 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8080/users/1/comments?eventId=1",
+          "raw": "http://localhost:8080/users/1/comments",
           "protocol": "http",
           "host": [
             "localhost"
@@ -194,12 +194,6 @@
             "users",
             "1",
             "comments"
-          ],
-          "query": [
-            {
-              "key": "eventId",
-              "value": "1"
-            }
           ]
         }
       },
@@ -223,7 +217,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{ \"text\": \"Обновил текст: планы изменились, но событие крутое.\" }",
+          "raw": "{ \r\n  \"text\": \"Обновил текст: планы изменились, но событие крутое.\",\r\n  \"eventId\": 1 \r\n}\r\n",
           "options": {
             "raw": {
               "language": "json"
@@ -284,6 +278,109 @@
               "key": "size",
               "value": "10"
             }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение одиночного комментария пользователем",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение комментариев пользователя к событию",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments?eventId=1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments"
+          ],
+          "query": [
+            {
+              "key": "eventId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение одиночного комментария к событию",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/events/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "events",
+            "comments",
+            "1"
           ]
         }
       },

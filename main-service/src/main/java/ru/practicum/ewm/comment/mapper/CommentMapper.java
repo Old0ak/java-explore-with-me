@@ -15,10 +15,10 @@ public interface CommentMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "text", source = "dto.text")
     @Mapping(target = "event", source = "event")
+    @Mapping(target = "createdOn", ignore = true)
     Comment toComment(NewCommentDto dto, Event event, User author);
 
     @Mapping(target = "eventId", source = "comment.event.id")
-    @Mapping(target = "authorId", source = "comment.author.id")
-    @Mapping(target = "authorName", source = "comment.author.name")
+    @Mapping(target = "author", source = "comment.author")
     CommentResponseDto toCommentResponseDto(Comment comment);
 }

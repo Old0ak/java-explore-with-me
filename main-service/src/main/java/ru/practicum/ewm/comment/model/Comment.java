@@ -31,8 +31,9 @@ public class Comment {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
+    @Builder.Default
     @Column(name = "created_on", nullable = false)
-    private LocalDateTime createdOn;
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     @Column(name = "updated_on")
     private LocalDateTime updatedOn;

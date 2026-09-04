@@ -13,6 +13,8 @@ import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.comment.mapper.CommentMapper;
+import ru.practicum.ewm.comment.repository.CommentRepository;
 import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.*;
@@ -46,9 +48,11 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ParticipationRequestRepository requestRepository;
+    private final CommentRepository commentRepository;
 
     private final EventMapper eventMapper;
     private final ParticipationRequestMapper requestMapper;
+    private final CommentMapper commentMapper;
 
     private final StatsClient statsClient;
 
@@ -70,6 +74,9 @@ public class EventServiceImpl implements EventService {
                 .map(event -> {
                     EventFullDto dto = eventMapper.toEventFullDto(event);
                     dto.setViews(viewsMap.getOrDefault("/events/" + event.getId(), 0L));
+                    dto.setComments(commentRepository.findAllByEventId(event.getId()).stream()
+                            .map(commentMapper::toCommentResponseDto)
+                            .collect(Collectors.toList()));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -102,7 +109,13 @@ public class EventServiceImpl implements EventService {
                 request.getLocation(), request.getCategory());
 
         Event updatedEvent = eventRepository.saveAndFlush(event);
-        return eventMapper.toEventFullDto(updatedEvent);
+        EventFullDto dto = eventMapper.toEventFullDto(updatedEvent);
+
+        dto.setComments(commentRepository.findAllByEventId(eventId).stream()
+                .map(commentMapper::toCommentResponseDto)
+                .collect(Collectors.toList()));
+
+        return dto;
     }
 
     // Получение списков своих событий организатором
@@ -119,6 +132,7 @@ public class EventServiceImpl implements EventService {
                 .map(event -> {
                     EventShortDto dto = eventMapper.toEventShortDto(event);
                     dto.setViews(viewsMap.getOrDefault("/events/" + event.getId(), 0L));
+                    dto.setCommentsCount(commentRepository.countByEventId(event.getId()));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -144,14 +158,22 @@ public class EventServiceImpl implements EventService {
         event.setConfirmedRequests(0L);
 
         Event savedEvent = eventRepository.save(event);
-        return eventMapper.toEventFullDto(savedEvent);
+        EventFullDto dto = eventMapper.toEventFullDto(savedEvent);
+
+        dto.setComments(new ArrayList<>());
+        return dto;
     }
 
     // Получение полной информации о своем конкретном событии
     @Override
     public EventFullDto getEventByIdAndUserId(Long userId, Long eventId) {
         Event event = getEventAndCheckInitiator(userId, eventId);
-        return eventMapper.toEventFullDto(event);
+        EventFullDto dto = eventMapper.toEventFullDto(event);
+
+        dto.setComments(commentRepository.findAllByEventId(eventId).stream()
+                .map(commentMapper::toCommentResponseDto)
+                .collect(Collectors.toList()));
+        return dto;
     }
 
     // Изменение своего события пользователем
@@ -168,7 +190,8 @@ public class EventServiceImpl implements EventService {
         Event event = getEventAndCheckInitiator(userId, eventId);
 
         if (event.getState() == EventState.PUBLISHED) {
-            throw new ConflictException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
+            throw new ConflictException(
+                    "Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
 
         if (request.getEventDate() != null) {
@@ -188,7 +211,12 @@ public class EventServiceImpl implements EventService {
                 request.getLocation(), request.getCategory());
 
         Event updatedEvent = eventRepository.saveAndFlush(event);
-        return eventMapper.toEventFullDto(updatedEvent);
+        EventFullDto dto = eventMapper.toEventFullDto(updatedEvent);
+
+        dto.setComments(commentRepository.findAllByEventId(eventId).stream()
+                .map(commentMapper::toCommentResponseDto)
+                .collect(Collectors.toList()));
+        return dto;
     }
 
     // Публичный поиск афиши событий
@@ -236,6 +264,7 @@ public class EventServiceImpl implements EventService {
                 .map(event -> {
                     EventShortDto dto = eventMapper.toEventShortDto(event);
                     dto.setViews(viewsMap.getOrDefault("/events/" + event.getId(), 0L));
+                    dto.setCommentsCount(commentRepository.countByEventId(event.getId()));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -278,6 +307,10 @@ public class EventServiceImpl implements EventService {
             log.error("Ошибка при получении просмотров для события id={}: {}", id, e.getMessage());
             dto.setViews(0L);
         }
+
+        dto.setComments(commentRepository.findAllByEventId(id).stream()
+                .map(commentMapper::toCommentResponseDto)
+                .collect(Collectors.toList()));
 
         return dto;
     }

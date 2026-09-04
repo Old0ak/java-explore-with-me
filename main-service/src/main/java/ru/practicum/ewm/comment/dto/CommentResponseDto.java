@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.ewm.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
 
@@ -19,9 +20,7 @@ public class CommentResponseDto {
 
     private Long eventId;
 
-    private Long authorId;
-
-    private String authorName;
+    private UserShortDto author;
 
     private LocalDateTime createdOn;
 
