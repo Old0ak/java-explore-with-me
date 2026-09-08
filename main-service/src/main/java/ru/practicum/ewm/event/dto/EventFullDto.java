@@ -3,10 +3,12 @@ package ru.practicum.ewm.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.comment.dto.CommentResponseDto;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,4 +48,6 @@ public class EventFullDto {
     private String title;
 
     private Long views; // Количество просмотров из сервиса статистики
+
+    private List<CommentResponseDto> comments; // Список комментариев к событию
 }

@@ -1,0 +1,471 @@
+{
+  "info": {
+    "_postman_id": "8ea9ca8a-7c08-4114-864c-65cba7b4eb4f",
+    "name": "feature",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52864618",
+    "_collection_link": "https://go.postman.co/collection/52864618-8ea9ca8a-7c08-4114-864c-65cba7b4eb4f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Создание пользователя",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Подготовка: Пользователь успешно создан\", () => {\r\n    pm.response.to.have.status(201);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Иван Иванов\",\r\n    \"email\": \"ivan.ivanov@test.ru\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/admin/users",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создание категории",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Подготовка: Категория успешно создана\", () => {\r\n    pm.response.to.have.status(201);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Выставка {{$randomInt}}\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/admin/categories",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "categories"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создание события",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"annotation\": \"Главная выставка цифрового искусства этого года\",\r\n    \"category\": 1,\r\n    \"description\": \"Огромная экспозиция современных художников со всего мира в главном павильоне.\",\r\n    \"eventDate\": \"2027-10-10 18:00:00\",\r\n    \"location\": {\r\n        \"lat\": 55.754167,\r\n        \"lon\": 37.620000\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 500,\r\n    \"requestModeration\": true,\r\n    \"title\": \"Цифровая Эра 2027\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/users/1/events",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "events"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Публикация события администратором",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Подготовка: Событие успешно опубликовано администратором\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"stateAction\": \"PUBLISH_EVENT\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/admin/events/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "events",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Добавление комментария",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 201 Created\", () => {\r\n    pm.response.to.have.status(201);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \r\n  \"text\": \"Классное мероприятие, обязательно приду!\",\r\n  \"eventId\": 1 \r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Изменение комментария",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \r\n  \"text\": \"Обновил текст: планы изменились, но событие крутое.\",\r\n  \"eventId\": 1 \r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение списка комментариев",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/events/1/comments?from=0&size=10",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "events",
+            "1",
+            "comments"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение одиночного комментария пользователем",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение комментариев пользователя к событию",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments?eventId=1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments"
+          ],
+          "query": [
+            {
+              "key": "eventId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение одиночного комментария к событию",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/events/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "events",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Поиск комментариев администратором",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 200 OK\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/admin/comments?users=1&events=1&from=0&size=10",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "comments"
+          ],
+          "query": [
+            {
+              "key": "users",
+              "value": "1"
+            },
+            {
+              "key": "events",
+              "value": "1"
+            },
+            {
+              "key": "from",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Удаление комментария администратором",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Статус ответа должен быть 204 No Content\", () => {\r\n    pm.response.to.have.status(204);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/admin/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
